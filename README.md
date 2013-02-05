@@ -27,4 +27,4 @@ The dependency :
       </dependency>
     </dependencies>
 
-The groupId com.github.avianey was choosed to avoid conflict with other third parties ports published in commons repositories.
+The groupId com.github.avianey was picked to avoid conflict with other third parties ports published in commons repositories.
