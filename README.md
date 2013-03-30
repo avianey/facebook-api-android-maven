@@ -22,7 +22,7 @@ The dependency :
       <dependency>
         <groupId>com.github.avianey</groupId>
         <artifactId>facebook-android-api</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.1</version>
         <type>apklib</type>
       </dependency>
     </dependencies>
