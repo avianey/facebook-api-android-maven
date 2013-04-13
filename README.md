@@ -11,7 +11,7 @@ The repository :
       ...  
       <repository>  
         <id>The mavenized Facebook Android API</id>  
-        <url>http://avianey.github.com/facebook-api-android-maven/</url>  
+        <url>http://avianey.github.io/facebook-api-android-maven/</url>  
       </repository>  
     </repositories>
 
