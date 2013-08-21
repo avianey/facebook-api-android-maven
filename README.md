@@ -1,7 +1,7 @@
 The mavenized Facebook Android API
 ==================================
 
-Current port is based on the v3.0 available at https://developers.facebook.com/android/  
+Current port is based on the v3.5 available at https://developers.facebook.com/android/  
 
 To use it in your Android Maven projects you need to add the following repository and dependency to your project pom.xml.  
 
@@ -22,7 +22,7 @@ The dependency :
       <dependency>
         <groupId>com.github.avianey</groupId>
         <artifactId>facebook-android-api</artifactId>
-        <version>3.0.1</version>
+        <version>3.5.0</version>
         <type>apklib</type>
       </dependency>
     </dependencies>

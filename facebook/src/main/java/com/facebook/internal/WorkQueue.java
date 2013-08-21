@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.facebook.widget;
+package com.facebook.internal;
 
 import com.facebook.Settings;
 

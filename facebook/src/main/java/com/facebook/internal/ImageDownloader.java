@@ -14,26 +14,28 @@
  * limitations under the License.
  */
 
-package com.facebook.widget;
+package com.facebook.internal;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
+import android.os.Looper;
 import com.facebook.FacebookException;
-import com.facebook.internal.Utility;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
-class ImageDownloader {
+public class ImageDownloader {
     private static final int DOWNLOAD_QUEUE_MAX_CONCURRENT = WorkQueue.DEFAULT_MAX_CONCURRENT;
     private static final int CACHE_READ_QUEUE_MAX_CONCURRENT = 2;
-    private static final Handler handler = new Handler();
+    private static Handler handler;
     private static WorkQueue downloadQueue = new WorkQueue(DOWNLOAD_QUEUE_MAX_CONCURRENT);
     private static WorkQueue cacheReadQueue = new WorkQueue(CACHE_READ_QUEUE_MAX_CONCURRENT);
 
@@ -44,7 +46,7 @@ class ImageDownloader {
      * If a callback is specified, it is guaranteed to be invoked on the calling thread.
      * @param request Request to process
      */
-    static void downloadAsync(ImageRequest request) {
+    public static void downloadAsync(ImageRequest request) {
         if (request == null) {
             return;
         }
@@ -54,7 +56,7 @@ class ImageDownloader {
         // redirect response and the Url might change. We can't create our own new ImageRequests
         // for these changed Urls since the caller might be doing some book-keeping with the request's
         // object reference. So we keep the old references and just map them to new urls in the downloader
-        RequestKey key = new RequestKey(request.getImageUrl(), request.getCallerTag());
+        RequestKey key = new RequestKey(request.getImageUri(), request.getCallerTag());
         synchronized (pendingRequests) {
             DownloaderContext downloaderContext = pendingRequests.get(key);
             if (downloaderContext != null) {
@@ -67,9 +69,9 @@ class ImageDownloader {
         }
     }
 
-    static boolean cancelRequest(ImageRequest request) {
+    public static boolean cancelRequest(ImageRequest request) {
         boolean cancelled = false;
-        RequestKey key = new RequestKey(request.getImageUrl(), request.getCallerTag());
+        RequestKey key = new RequestKey(request.getImageUri(), request.getCallerTag());
         synchronized (pendingRequests) {
             DownloaderContext downloaderContext = pendingRequests.get(key);
             if (downloaderContext != null) {
@@ -91,14 +93,19 @@ class ImageDownloader {
         return cancelled;
     }
 
-    static void prioritizeRequest(ImageRequest request) {
-        RequestKey key = new RequestKey(request.getImageUrl(), request.getCallerTag());
+    public static void prioritizeRequest(ImageRequest request) {
+        RequestKey key = new RequestKey(request.getImageUri(), request.getCallerTag());
         synchronized (pendingRequests) {
             DownloaderContext downloaderContext = pendingRequests.get(key);
             if (downloaderContext != null) {
                 downloaderContext.workItem.moveToFront();
             }
         }
+    }
+
+    public static void clearCache(Context context) {
+        ImageResponseCache.clearCache(context);
+        UrlRedirectCache.clearCache(context);
     }
 
     private static void enqueueCacheRead(ImageRequest request, RequestKey key, boolean allowCachedRedirects) {
@@ -150,7 +157,7 @@ class ImageDownloader {
             final ImageRequest request = completedRequestContext.request;
             final ImageRequest.Callback callback = request.getCallback();
             if (callback != null) {
-                handler.post(new Runnable() {
+                getHandler().post(new Runnable() {
                     @Override
                     public void run() {
                         ImageResponse response = new ImageResponse(
@@ -169,15 +176,15 @@ class ImageDownloader {
         InputStream cachedStream = null;
         boolean isCachedRedirect = false;
         if (allowCachedRedirects) {
-            URL redirectUrl = UrlRedirectCache.getRedirectedUrl(context, key.url);
-            if (redirectUrl != null) {
-                cachedStream = ImageResponseCache.getCachedImageStream(redirectUrl, context);
+            URI redirectUri = UrlRedirectCache.getRedirectedUri(context, key.uri);
+            if (redirectUri != null) {
+                cachedStream = ImageResponseCache.getCachedImageStream(redirectUri, context);
                 isCachedRedirect = cachedStream != null;
             }
         }
 
         if (!isCachedRedirect) {
-            cachedStream = ImageResponseCache.getCachedImageStream(key.url, context);
+            cachedStream = ImageResponseCache.getCachedImageStream(key.uri, context);
         }
 
         if (cachedStream != null) {
@@ -203,7 +210,8 @@ class ImageDownloader {
         boolean issueResponse = true;
 
         try {
-            connection = (HttpURLConnection) key.url.openConnection();
+            URL url = new URL(key.uri.toString());
+            connection = (HttpURLConnection) url.openConnection();
             connection.setInstanceFollowRedirects(false);
 
             switch (connection.getResponseCode()) {
@@ -214,8 +222,8 @@ class ImageDownloader {
 
                     String redirectLocation = connection.getHeaderField("location");
                     if (!Utility.isNullOrEmpty(redirectLocation)) {
-                        URL redirectUrl = new URL(redirectLocation);
-                        UrlRedirectCache.cacheUrlRedirect(context, key.url, redirectUrl);
+                        URI redirectUri = new URI(redirectLocation);
+                        UrlRedirectCache.cacheUriRedirect(context, key.uri, redirectUri);
 
                         // Once the old downloader context is removed, we are thread-safe since this is the
                         // only reference to it
@@ -223,7 +231,7 @@ class ImageDownloader {
                         if (downloaderContext != null && !downloaderContext.isCancelled) {
                             enqueueCacheRead(
                                     downloaderContext.request,
-                                    new RequestKey(redirectUrl, key.tag),
+                                    new RequestKey(redirectUri, key.tag),
                                     false);
                         }
                     }
@@ -251,6 +259,8 @@ class ImageDownloader {
             }
         } catch (IOException e) {
             error = e;
+        } catch (URISyntaxException e) {
+            error = e;
         } finally {
             Utility.closeQuietly(stream);
             Utility.disconnectQuietly(connection);
@@ -259,6 +269,13 @@ class ImageDownloader {
         if (issueResponse) {
             issueResponse(key, error, bitmap, false);
         }
+    }
+
+    private static synchronized Handler getHandler() {
+        if (handler == null) {
+            handler = new Handler(Looper.getMainLooper());
+        }
+        return handler;
     }
 
     private static DownloaderContext removePendingRequest(RequestKey key) {
@@ -271,11 +288,11 @@ class ImageDownloader {
         private static final int HASH_SEED = 29; // Some random prime number
         private static final int HASH_MULTIPLIER = 37; // Some random prime number
 
-        URL url;
+        URI uri;
         Object tag;
 
-        RequestKey(URL url, Object tag) {
-            this.url = url;
+        RequestKey(URI url, Object tag) {
+            this.uri = url;
             this.tag = tag;
         }
 
@@ -283,7 +300,7 @@ class ImageDownloader {
         public int hashCode() {
             int result = HASH_SEED;
 
-            result = (result * HASH_MULTIPLIER) + url.hashCode();
+            result = (result * HASH_MULTIPLIER) + uri.hashCode();
             result = (result * HASH_MULTIPLIER) + tag.hashCode();
 
             return result;
@@ -295,7 +312,7 @@ class ImageDownloader {
 
             if (o != null && o instanceof RequestKey) {
                 RequestKey compareTo = (RequestKey)o;
-                isEqual = compareTo.url == url && compareTo.tag == tag;
+                isEqual = compareTo.uri == uri && compareTo.tag == tag;
             }
 
             return isEqual;

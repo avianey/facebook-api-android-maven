@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package com.facebook.widget;
+package com.facebook.internal;
 
 import android.content.Context;
 import android.util.Log;
-import com.facebook.internal.Logger;
 import com.facebook.LoggingBehavior;
-import com.facebook.internal.Utility;
-import com.facebook.internal.FileLruCache;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 class ImageResponseCache {
@@ -43,7 +42,7 @@ class ImageResponseCache {
 
     // Get stream from cache, or return null if the image is not cached.
     // Does not throw if there was an error.
-    static InputStream getCachedImageStream(URL url, Context context) {
+    static InputStream getCachedImageStream(URI url, Context context) {
         InputStream imageStream = null;
         if (url != null) {
             if (isCDNURL(url)) {
@@ -64,23 +63,25 @@ class ImageResponseCache {
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
             URL url = connection.getURL();
             stream = connection.getInputStream(); // Default stream in case caching fails
-            if (isCDNURL(url)) {
-                try {
+            try {
+                if (isCDNURL(url.toURI())) {
                     FileLruCache cache = getCache(context);
 
                     // Wrap stream with a caching stream
                     stream = cache.interceptAndPut(
                             url.toString(),
                             new BufferedHttpInputStream(stream, connection));
-                } catch (IOException e) {
-                    // Caching is best effort
                 }
+            } catch (IOException e) {
+                // Caching is best effort
+            } catch (URISyntaxException e) {
+            // Caching is best effort
             }
         }
         return stream;
     }
 
-   private static boolean isCDNURL(URL url) {
+   private static boolean isCDNURL(URI url) {
         if (url != null) {
             String uriHost = url.getHost();
 
@@ -94,6 +95,14 @@ class ImageResponseCache {
         }
 
         return false;
+    }
+
+    static void clearCache(Context context) {
+        try {
+            getCache(context).clearCache();
+        } catch (IOException e) {
+            Logger.log(LoggingBehavior.CACHE, Log.WARN, TAG, "clearCache failed " + e.getMessage());
+        }
     }
 
     private static class BufferedHttpInputStream extends BufferedInputStream {

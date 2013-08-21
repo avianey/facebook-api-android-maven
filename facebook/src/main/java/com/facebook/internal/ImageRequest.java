@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package com.facebook.widget;
+package com.facebook.internal;
 
 import android.content.Context;
 import android.net.Uri;
-import com.facebook.internal.Validate;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-class ImageRequest {
+public class ImageRequest {
 
-    interface Callback {
+    public interface Callback {
         /**
          * This method should always be called on the UI thread. ImageDownloader makes
          * sure to do this when it is responsible for issuing the ImageResponse
@@ -34,7 +33,7 @@ class ImageRequest {
         void onCompleted(ImageResponse response);
     }
 
-    static final int UNSPECIFIED_DIMENSION = 0;
+    public static final int UNSPECIFIED_DIMENSION = 0;
 
     private static final String PROFILEPIC_URL_FORMAT =
             "https://graph.facebook.com/%s/picture";
@@ -44,16 +43,16 @@ class ImageRequest {
     private static final String MIGRATION_VALUE = "{october_2012:true}";
 
     private Context context;
-    private URL imageUrl;
+    private URI imageUri;
     private Callback callback;
     private boolean allowCachedRedirects;
     private Object callerTag;
 
-    static URL getProfilePictureUrl(
+    public static URI getProfilePictureUrl(
             String userId,
             int width,
             int height)
-        throws MalformedURLException {
+            throws URISyntaxException {
 
         Validate.notNullOrEmpty(userId, "userId");
 
@@ -76,69 +75,69 @@ class ImageRequest {
 
         builder.appendQueryParameter(MIGRATION_PARAM, MIGRATION_VALUE);
 
-        return new URL(builder.toString());
+        return new URI(builder.toString());
     }
 
     private ImageRequest(Builder builder) {
         this.context = builder.context;
-        this.imageUrl = builder.imageUrl;
+        this.imageUri = builder.imageUrl;
         this.callback = builder.callback;
         this.allowCachedRedirects = builder.allowCachedRedirects;
         this.callerTag = builder.callerTag == null ? new Object() : builder.callerTag;
     }
 
-    Context getContext() {
+    public Context getContext() {
         return context;
     }
 
-    URL getImageUrl() {
-        return imageUrl;
+    public URI getImageUri() {
+        return imageUri;
     }
 
-    Callback getCallback() {
+    public Callback getCallback() {
         return callback;
     }
 
-    boolean isCachedRedirectAllowed() {
+    public boolean isCachedRedirectAllowed() {
         return allowCachedRedirects;
     }
 
-    Object getCallerTag() {
+    public Object getCallerTag() {
         return callerTag;
     }
 
-    static class Builder {
+    public static class Builder {
         // Required
         private Context context;
-        private URL imageUrl;
+        private URI imageUrl;
 
         // Optional
         private Callback callback;
         private boolean allowCachedRedirects;
         private Object callerTag;
 
-        Builder(Context context, URL imageUrl) {
+        public Builder(Context context, URI imageUrl) {
             Validate.notNull(imageUrl, "imageUrl");
             this.context = context;
             this.imageUrl = imageUrl;
         }
 
-        Builder setCallback(Callback callback) {
+        public Builder setCallback(Callback callback) {
             this.callback = callback;
             return this;
         }
 
-        Builder setCallerTag(Object callerTag) {
+        public Builder setCallerTag(Object callerTag) {
             this.callerTag = callerTag;
             return this;
         }
 
-        Builder setAllowCachedRedirects(boolean allowCachedRedirects) {
+        public Builder setAllowCachedRedirects(boolean allowCachedRedirects) {
             this.allowCachedRedirects = allowCachedRedirects;
             return this;
         }
 
-        ImageRequest build() {
+        public ImageRequest build() {
             return new ImageRequest(this);
         }
     }

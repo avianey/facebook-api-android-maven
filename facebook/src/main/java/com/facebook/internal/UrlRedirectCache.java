@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.facebook.widget;
+package com.facebook.internal;
 
 import android.content.Context;
-import com.facebook.internal.FileLruCache;
-import com.facebook.internal.Utility;
+import android.util.Log;
+import com.facebook.LoggingBehavior;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 class UrlRedirectCache {
     static final String TAG = UrlRedirectCache.class.getSimpleName();
@@ -40,19 +40,18 @@ class UrlRedirectCache {
         return urlRedirectCache;
     }
 
-    static URL getRedirectedUrl(Context context, URL url) {
-        if (url == null) {
+    static URI getRedirectedUri(Context context, URI uri) {
+        if (uri == null) {
             return null;
         }
 
-        String urlString = url.toString();
-        URL finalUrl = null;
+        String uriString = uri.toString();
         InputStreamReader reader = null;
         try {
             InputStream stream;
             FileLruCache cache = getCache(context);
             boolean redirectExists = false;
-            while ((stream = cache.get(urlString, REDIRECT_CONTENT_TAG)) != null) {
+            while ((stream = cache.get(uriString, REDIRECT_CONTENT_TAG)) != null) {
                 redirectExists = true;
 
                 // Get the redirected url
@@ -66,36 +65,44 @@ class UrlRedirectCache {
                 Utility.closeQuietly(reader);
 
                 // Iterate to the next url in the redirection
-                urlString = urlBuilder.toString();
+                uriString = urlBuilder.toString();
             }
 
             if (redirectExists) {
-                finalUrl = new URL(urlString);
+                return new URI(uriString);
             }
-        } catch (MalformedURLException e) {
+        } catch (URISyntaxException e) {
             // caching is best effort, so ignore the exception
         } catch (IOException ioe) {
         } finally {
             Utility.closeQuietly(reader);
         }
 
-        return finalUrl;
+        return null;
     }
 
-    static void cacheUrlRedirect(Context context, URL fromUrl, URL toUrl) {
-        if (fromUrl == null || toUrl == null) {
+    static void cacheUriRedirect(Context context, URI fromUri, URI toUri) {
+        if (fromUri == null || toUri == null) {
             return;
         }
 
         OutputStream redirectStream = null;
         try {
             FileLruCache cache = getCache(context);
-            redirectStream = cache.openPutStream(fromUrl.toString(), REDIRECT_CONTENT_TAG);
-            redirectStream.write(toUrl.toString().getBytes());
+            redirectStream = cache.openPutStream(fromUri.toString(), REDIRECT_CONTENT_TAG);
+            redirectStream.write(toUri.toString().getBytes());
         } catch (IOException e) {
             // Caching is best effort
         } finally {
             Utility.closeQuietly(redirectStream);
+        }
+    }
+
+    static void clearCache(Context context) {
+        try {
+            getCache(context).clearCache();
+        } catch (IOException e) {
+            Logger.log(LoggingBehavior.CACHE, Log.WARN, TAG, "clearCache failed " + e.getMessage());
         }
     }
 }

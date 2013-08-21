@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.facebook.widget;
+package com.facebook.internal;
 
 import android.graphics.Bitmap;
 
-class ImageResponse {
+public class ImageResponse {
 
     private ImageRequest request;
     private Exception error;
@@ -32,19 +32,19 @@ class ImageResponse {
         this.isCachedRedirect = isCachedRedirect;
     }
 
-    ImageRequest getRequest() {
+    public ImageRequest getRequest() {
         return request;
     }
 
-    Exception getError() {
+    public Exception getError() {
         return error;
     }
 
-    Bitmap getBitmap() {
+    public Bitmap getBitmap() {
         return bitmap;
     }
 
-    boolean isCachedRedirect() {
+    public boolean isCachedRedirect() {
         return isCachedRedirect;
     }
 }
