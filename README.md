@@ -22,7 +22,7 @@ The dependency :
       <dependency>
         <groupId>com.github.avianey</groupId>
         <artifactId>facebook-android-api</artifactId>
-        <version>3.5.0</version>
+        <version>3.5</version>
         <type>apklib</type>
       </dependency>
     </dependencies>
@@ -36,7 +36,7 @@ If you want to use a different version for the android-support-v4 dependency you
       <dependency>
         <groupId>com.github.avianey</groupId>
         <artifactId>facebook-android-api</artifactId>
-        <version>3.5.0</version>
+        <version>3.5</version>
         <type>apklib</type>
         <exclusions>
           <exclusion>
