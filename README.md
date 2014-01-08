@@ -1,48 +1,57 @@
-The mavenized Facebook Android API
-==================================
+The Facebook Android SDK for Maven & Gradle
+===========================================
 
-Current port is based on the v3.5.2 available at https://developers.facebook.com/android/  
+Current port is based on the v3.6.0 available at https://developers.facebook.com/android/  
+The API is packaged as an **aar** and available from Maven Central Repository for use with **Maven** or **Gradle**.
 
-To use it in your Android Maven projects you need to add the following repository and dependency to your project pom.xml.  
+##How to use
 
-The repository :  
+###Maven
 
-    <repositories>  
-      ...  
-      <repository>  
-        <id>The mavenized Facebook Android API</id>  
-        <url>http://avianey.github.io/facebook-api-android-maven/</url>  
-      </repository>  
-    </repositories>
+The **aar** dependency requires the use of the maven-android-plugin 3.8.1+ with maven 3.1.1+ :
 
-The dependency :  
-
-    <dependencies>
-      ...
-      <dependency>
-        <groupId>com.github.avianey</groupId>
-        <artifactId>facebook-android-api</artifactId>
-        <version>3.5.2</version>
-        <type>apklib</type>
-      </dependency>
-    </dependencies>
-
-The groupId com.github.avianey was picked to avoid conflicts with other third parties ports published in open repositories.  
+```xml
+<dependency>
+  <groupId>fr.avianey</groupId>
+  <artifactId>facebook-android-api</artifactId>
+  <version>3.6.0</version>
+  <type>aar</type>
+</dependency>
+```
 
 If you want to use a different version for the android-support-v4 dependency you just have to exclude the import like this :  
 
-    <dependencies>
-      ...
-      <dependency>
-        <groupId>com.github.avianey</groupId>
-        <artifactId>facebook-android-api</artifactId>
-        <version>3.5.2</version>
-        <type>apklib</type>
-        <exclusions>
-          <exclusion>
-            <artifactId>support-v4</artifactId>
-            <groupId>com.google.android</groupId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-    </dependencies>
+```xml
+<dependency>
+  <groupId>fr.avianey</groupId>
+  <artifactId>facebook-android-api</artifactId>
+  <version>3.6.0</version>
+  <type>aar</type>
+  <exclusions>
+    <exclusion>
+      <artifactId>support-v4</artifactId>
+      <groupId>com.google.android</groupId>
+    </exclusion>
+  </exclusions>
+</dependency>
+```
+
+###Gradle
+
+Add the following dependency to your build.graddle
+
+```javascript
+dependencies {
+  compile 'com.facebook:facebook-android-sdk:+@aar'
+  // other dependencies
+}
+```
+
+If you want to use a different version for the android-support-v4 dependency you just have to exclude the import like this :  
+
+```javascript
+configurations.all {
+  exclude group: 'com.google.android', module: 'support-v4', version: 'r7'
+  // other configurations
+}
+```
