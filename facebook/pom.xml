@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project 
-    xmlns="http://maven.apache.org/POM/4.0.0" 
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-                        http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                          http://maven.apache.org/maven-v4_0_0.xsd">
          
     <modelVersion>4.0.0</modelVersion>
     <groupId>fr.avianey</groupId>
     <artifactId>facebook-android-api</artifactId>
-    <version>3.6.0-SNAPSHOT</version>
+    <version>3.6.0</version>
     <packaging>aar</packaging>
 	
 	<description>
@@ -42,7 +38,7 @@
         <url>https://github.com/avianey/facebook-api-android-maven</url>
         <developerConnection>scm:git:git@github.com/avianey/facebook-api-android-maven.git</developerConnection>
         <connection>scm:git:git://github.com/avianey/facebook-api-android-maven.git</connection>
-        <tag>HEAD</tag>
+        <tag>facebook-android-api-3.6.0</tag>
     </scm>
 
     <properties>
