@@ -6,10 +6,44 @@
                         http://maven.apache.org/maven-v4_0_0.xsd">
          
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.github.avianey</groupId>
+    <groupId>fr.avianey</groupId>
     <artifactId>facebook-android-api</artifactId>
-    <version>3.5</version>
-    <packaging>apklib</packaging>
+    <version>3.6-SNAPSHOT</version>
+    <packaging>aar</packaging>
+	
+	<description>
+            The Mavenized Facebook Android api available in Maven Central repo.
+	</description>
+	<contributors>
+		<contributor>
+			<name>Antoine Vianey</name>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<url>http://avianey.github.com</url>
+		</contributor>
+	</contributors>
+    
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+        
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+	</licenses>
+    
+    <scm>
+        <url>https://github.com/avianey/facebook-api-android-maven</url>
+        <developerConnection>scm:git:git@github.com/avianey/facebook-api-android-maven.git</developerConnection>
+        <connection>scm:git:git://github.com/avianey/facebook-api-android-maven.git</connection>
+        <tag>HEAD</tag>
+    </scm>
 
     <properties>
         <platform.version>4.1.1.4</platform.version>
@@ -30,31 +64,127 @@
     </dependencies>
 
     <build>
+		
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.4.2</version>
+					<configuration>
+						<mavenExecutorId>forked-path</mavenExecutorId>
+						<useReleaseProfile>false</useReleaseProfile>
+						<arguments>${arguments} -Psonatype-oss-release</arguments>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+			
         <plugins>
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
-                <version>3.6.1</version>
+                <version>3.8.2</version>
                 <configuration>
                     <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
                     <assetsDirectory>${project.basedir}/assets</assetsDirectory>
                     <resourceDirectory>${project.basedir}/res</resourceDirectory>
                     <nativeLibrariesDirectory>${project.basedir}/src/main/native</nativeLibrariesDirectory>
                     <sdk>
-                        <platform>18</platform>
+                        <platform>19</platform>
                     </sdk>
                 </configuration>
                 <extensions>true</extensions>
             </plugin>
-
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <configuration>
+                    <outputDirectory>${project.build.directory}</outputDirectory>
+                    <attach>true</attach>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
+                <version>3.1</version>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <pushChanges>false</pushChanges>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+	
+	<!-- 
+    mvn clean release:clean -s settings.xml
+    mvn release:prepare -s settings.xml -Darguments=
+    manual push
+    mvn release:perform -s settings.xml -Darguments=
+    -->
+    <profiles>
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.4</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <distributionManagement>
+                <repository>
+                    <id>sonatype-nexus-staging</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+	
 </project>

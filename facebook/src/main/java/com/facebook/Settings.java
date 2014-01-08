@@ -63,8 +63,9 @@ public final class Settings {
     private static final String PUBLISH_ACTIVITY_PATH = "%s/activities";
     private static final String MOBILE_INSTALL_EVENT = "MOBILE_APP_INSTALL";
     private static final String ANALYTICS_EVENT = "event";
-    private static final String ATTRIBUTION_KEY = "attribution";
     private static final String AUTO_PUBLISH = "auto_publish";
+
+    private static final String APP_EVENT_PREFERENCES = "com.facebook.sdk.appEventPreferences";
 
     private static final BlockingQueue<Runnable> DEFAULT_WORK_QUEUE = new LinkedBlockingQueue<Runnable>(10);
 
@@ -355,9 +356,12 @@ public final class Settings {
 
             GraphObject publishParams = GraphObject.Factory.create();
             publishParams.setProperty(ANALYTICS_EVENT, MOBILE_INSTALL_EVENT);
-            publishParams.setProperty(ATTRIBUTION_KEY, attributionId);
+
+            Utility.setAppEventAttributionParameters(publishParams,
+                    attributionId,
+                    Utility.getHashedDeviceAndAppID(context, applicationId),
+                    !getLimitEventAndDataUsage(context));
             publishParams.setProperty(AUTO_PUBLISH, isAutoPublish);
-            publishParams.setProperty("application_tracking_enabled", !AppEventsLogger.getLimitEventUsage(context));
             publishParams.setProperty("application_package_name", context.getPackageName());
 
             String publishUrl = String.format(PUBLISH_ACTIVITY_PATH, applicationId);
@@ -414,14 +418,19 @@ public final class Settings {
      * @return returns null if the facebook app is not present on the phone.
      */
     public static String getAttributionId(ContentResolver contentResolver) {
-        String [] projection = {ATTRIBUTION_ID_COLUMN_NAME};
-        Cursor c = contentResolver.query(ATTRIBUTION_ID_CONTENT_URI, projection, null, null, null);
-        if (c == null || !c.moveToFirst()) {
+        try {
+            String [] projection = {ATTRIBUTION_ID_COLUMN_NAME};
+            Cursor c = contentResolver.query(ATTRIBUTION_ID_CONTENT_URI, projection, null, null, null);
+            if (c == null || !c.moveToFirst()) {
+                return null;
+            }
+            String attributionId = c.getString(c.getColumnIndex(ATTRIBUTION_ID_COLUMN_NAME));
+            c.close();
+            return attributionId;
+        } catch (Exception e) {
+            Log.d(TAG, "Caught unexpected exception in getAttributionId(): " + e.toString());
             return null;
         }
-        String attributionId = c.getString(c.getColumnIndex(ATTRIBUTION_ID_COLUMN_NAME));
-        c.close();
-        return attributionId;
     }
 
     /**
@@ -461,5 +470,32 @@ public final class Settings {
      */
     public static String getMigrationBundle() {
         return FacebookSdkVersion.MIGRATION_BUNDLE;
+    }
+
+    /**
+     * Gets whether data such as that generated through AppEventsLogger and sent to Facebook should be restricted from
+     * being used for purposes other than analytics and conversions, such as for targeting ads to this user.  Defaults
+     * to false.  This value is stored on the device and persists across app launches.
+     *
+     * @param context   Used to read the value.
+     */
+    public static boolean getLimitEventAndDataUsage(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(APP_EVENT_PREFERENCES, Context.MODE_PRIVATE);
+        return preferences.getBoolean("limitEventUsage", false);
+    }
+
+    /**
+     * Sets whether data such as that generated through AppEventsLogger and sent to Facebook should be restricted from
+     * being used for purposes other than analytics and conversions, such as for targeting ads to this user.  Defaults
+     * to false.  This value is stored on the device and persists across app launches.  Changes to this setting will
+     * apply to app events currently queued to be flushed.
+     *
+     * @param context   Used to persist this value across app runs.
+     */
+    public static void setLimitEventAndDataUsage(Context context, boolean limitEventUsage) {
+        SharedPreferences preferences = context.getSharedPreferences(APP_EVENT_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("limitEventUsage", limitEventUsage);
+        editor.commit();
     }
 }
