@@ -37,11 +37,11 @@ If you want to use a newer version of the android-support-v4 dependency, exclude
 
 ####Gradle
 
-Add the following dependency to your build.graddle
+Add the following dependency to your build.gradle
 
 ```javascript
 dependencies {
-  compile 'com.facebook:facebook-android-sdk:+@aar'
+  compile 'fr.avianey:facebook-android-api:+@aar'
   // other dependencies
 }
 ```
