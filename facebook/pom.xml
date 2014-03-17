@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>fr.avianey</groupId>
     <artifactId>facebook-android-api</artifactId>
-    <version>3.6.1-SNAPSHOT</version>
+    <version>3.7.0-SNAPSHOT</version>
     <packaging>aar</packaging>
 	
 	<description>
@@ -91,6 +91,29 @@
                     </sdk>
                 </configuration>
                 <extensions>true</extensions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/${artifactId}-${version}.jar</file>
+                                    <type>jar</type>
+                                    <classifier>jar</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
