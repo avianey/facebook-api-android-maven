@@ -18,23 +18,13 @@ The **aar** dependency requires the use of the maven-android-plugin 3.8.1+ with 
 </dependency>
 ```
 
-You might wan't to add the **jar** dependency as well to support code completion in your favourite IDE :  
-
-```xml
-<dependency>
-  <groupId>fr.avianey</groupId>
-  <artifactId>facebook-android-api</artifactId>
-  <version>3.7.0</version>
-  <type>jar</type>
-</dependency>
-```
-
 If you want to use a newer version of the android-support-v4 dependency, exclude the old one with this line :    
 
 ```xml
 <dependency>
   <groupId>fr.avianey</groupId>
   <artifactId>facebook-android-api</artifactId>
+  ...
   <exclusions>
     <exclusion>
       <artifactId>support-v4</artifactId>
