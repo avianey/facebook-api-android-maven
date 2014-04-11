@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>fr.avianey</groupId>
     <artifactId>facebook-android-api</artifactId>
-    <version>3.7.1-SNAPSHOT</version>
+    <version>3.8.0</version>
     <packaging>aar</packaging>
 	
 	<description>
@@ -38,7 +38,7 @@
         <url>https://github.com/avianey/facebook-api-android-maven</url>
         <developerConnection>scm:git:git@github.com/avianey/facebook-api-android-maven.git</developerConnection>
         <connection>scm:git:git://github.com/avianey/facebook-api-android-maven.git</connection>
-        <tag>HEAD</tag>
+        <tag>facebook-android-api-3.8.0</tag>
     </scm>
 
     <properties>
