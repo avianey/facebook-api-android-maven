@@ -78,6 +78,32 @@
 			
         <plugins>
             <plugin>
+    <groupId>org.eclipse.m2e</groupId>
+    <artifactId>lifecycle-mapping</artifactId>
+    <version>1.0.0</version>
+    <configuration>
+        <lifecycleMappingMetadata>
+            <pluginExecutions>
+                <pluginExecution>
+                    <pluginExecutionFilter>
+                        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                        <artifactId>android-maven-plugin</artifactId>
+                        <versionRange>[3.8.0,)</versionRange>
+                        <goals>
+                            <goal>consume-aar</goal>
+                        </goals>
+                    </pluginExecutionFilter>
+                    <action>
+                        <ignore />
+                    </action>
+                </pluginExecution>
+            </pluginExecutions>
+        </lifecycleMappingMetadata>
+    </configuration>
+</plugin>
+            
+            
+            <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
                 <version>3.8.2</version>
@@ -165,9 +191,9 @@
 	
 	<!-- 
     mvn clean release:clean -s settings.xml
-    mvn release:prepare -s settings.xml -Darguments=
+    mvn release:prepare -s settings.xml
     manual push
-    mvn release:perform -s settings.xml -Darguments=
+    mvn release:perform -s settings.xml
     -->
     <profiles>
         <profile>
