@@ -36,7 +36,7 @@ If you want to use a newer version of the android-support-v4 dependency, exclude
 </dependency>
 ```
 
-You might wan't to add the **jar** dependency as well to support code completion in Eclipse ADT. Adding the **jar** will result in **DEX** errors at build time as the Facebook API classes will be added twice to the generated **apk**. To solve the problem, build your project from command line and reference the **jar** dependency in the **m2e** (Eclipse only) Maven profile :  
+You might want to add the **jar** dependency as well to support code completion in Eclipse ADT. Adding the **jar** will result in **DEX** errors at build time as the Facebook API classes will be added twice to the generated **apk**. To solve the problem, build your project from command line and reference the **jar** dependency in the **m2e** (Eclipse only) Maven profile :  
 
 ```xml
 <profiles>
