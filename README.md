@@ -1,7 +1,9 @@
 ## Facebook Android SDK for Maven & Gradle
 
-Current port is based on the v3.14.0 available at https://developers.facebook.com/android/  
-The API is packaged as an **aar** and available from Maven Central Repository for use with **Maven** or **Gradle**.
+Current port is based on the v3.15.0 available at https://developers.facebook.com/android/  
+The API is packaged as an **aar** and available from Maven Central Repository for use with **Maven** or **Gradle**.  
+
+[![](https://coinbase.com/assets/buttons/donation_large-6ec72b1a9eec516944e50a22aca7db35.png)](https://coinbase.com/checkouts/0c34d3ca1be50e54a20bc83446b4db00)
 
 ###How to use
 
@@ -13,7 +15,7 @@ The **aar** dependency requires the use of the maven-android-plugin 3.8.1+ with 
 <dependency>
   <groupId>fr.avianey</groupId>
   <artifactId>facebook-android-api</artifactId>
-  <version>3.14.0</version>
+  <version>3.15.0</version>
   <type>aar</type>
 </dependency>
 ```
@@ -34,7 +36,7 @@ If you want to use a newer version of the android-support-v4 dependency, exclude
 </dependency>
 ```
 
-You might wan't to add the **jar** dependency as well to support code completion in Eclipse ADT. Adding the **jar** will result in **DEX** errors at build time as the Facebook API classes will be added twice to the generated **apk**. To solve the problem, build your project from command line and reference the **jar** dependency in the **m2e** (Eclipse only) Maven profile :  
+You might want to add the **jar** dependency as well to support code completion in Eclipse ADT. Adding the **jar** will result in **DEX** errors at build time as the Facebook API classes will be added twice to the generated **apk**. To solve the problem, build your project from command line and reference the **jar** dependency in the **m2e** (Eclipse only) Maven profile :  
 
 ```xml
 <profiles>
@@ -49,7 +51,7 @@ You might wan't to add the **jar** dependency as well to support code completion
       <dependency>
         <groupId>fr.avianey</groupId>
         <artifactId>facebook-android-api</artifactId>
-        <version>3.8.0</version>
+        <version>3.15.0</version>
         <type>jar</type>
         <exclusions>
           <exclusion>
