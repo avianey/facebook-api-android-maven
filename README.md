@@ -15,7 +15,7 @@ The **aar** dependency requires the use of the maven-android-plugin 3.8.1+ with 
 <dependency>
   <groupId>fr.avianey</groupId>
   <artifactId>facebook-android-api</artifactId>
-  <version>3.15.0</version>
+  <version>3.16.0</version>
   <type>aar</type>
 </dependency>
 ```
@@ -51,7 +51,7 @@ You might want to add the **jar** dependency as well to support code completion 
       <dependency>
         <groupId>fr.avianey</groupId>
         <artifactId>facebook-android-api</artifactId>
-        <version>3.15.0</version>
+        <version>3.16.0</version>
         <type>jar</type>
         <exclusions>
           <exclusion>
