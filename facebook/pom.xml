@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>fr.avianey</groupId>
     <artifactId>facebook-android-api</artifactId>
-    <version>3.16.1-SNAPSHOT</version>
+    <version>3.16.0</version>
     <packaging>aar</packaging>
 	
 	<description>
