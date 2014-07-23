@@ -1,6 +1,6 @@
 ## Facebook Android SDK for Maven & Gradle
 
-Current port is based on the v3.15.0 available at https://developers.facebook.com/android/  
+Current port is based on the v3.16.0 available at https://developers.facebook.com/android/  
 The API is packaged as an **aar** and available from Maven Central Repository for use with **Maven** or **Gradle**.  
 
 [![](https://coinbase.com/assets/buttons/donation_large-6ec72b1a9eec516944e50a22aca7db35.png)](https://coinbase.com/checkouts/0c34d3ca1be50e54a20bc83446b4db00)
