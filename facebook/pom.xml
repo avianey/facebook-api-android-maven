@@ -52,10 +52,10 @@
             <version>r7</version>
         </dependency>
         <dependency>
-			<groupId>fr.avianey</groupId>
-			<artifactId>bolts-android-api</artifactId>
-            <version>1.1.0</version>
-        </dependency>
+			<groupId>com.parse.bolts</groupId>
+			<artifactId>bolts-android</artifactId>
+			<version>1.1.2</version>
+		</dependency>
         <dependency>
             <groupId>com.google.android</groupId>
             <artifactId>android</artifactId>
@@ -83,29 +83,29 @@
 			
         <plugins>
             <plugin>
-    <groupId>org.eclipse.m2e</groupId>
-    <artifactId>lifecycle-mapping</artifactId>
-    <version>1.0.0</version>
-    <configuration>
-        <lifecycleMappingMetadata>
-            <pluginExecutions>
-                <pluginExecution>
-                    <pluginExecutionFilter>
-                        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-                        <artifactId>android-maven-plugin</artifactId>
-                        <versionRange>[3.8.0,)</versionRange>
-                        <goals>
-                            <goal>consume-aar</goal>
-                        </goals>
-                    </pluginExecutionFilter>
-                    <action>
-                        <ignore />
-                    </action>
-                </pluginExecution>
-            </pluginExecutions>
-        </lifecycleMappingMetadata>
-    </configuration>
-</plugin>
+				<groupId>org.eclipse.m2e</groupId>
+				<artifactId>lifecycle-mapping</artifactId>
+				<version>1.0.0</version>
+				<configuration>
+					<lifecycleMappingMetadata>
+						<pluginExecutions>
+							<pluginExecution>
+								<pluginExecutionFilter>
+									<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+									<artifactId>android-maven-plugin</artifactId>
+									<versionRange>[3.8.0,)</versionRange>
+									<goals>
+										<goal>consume-aar</goal>
+									</goals>
+								</pluginExecutionFilter>
+								<action>
+									<ignore />
+								</action>
+							</pluginExecution>
+						</pluginExecutions>
+					</lifecycleMappingMetadata>
+				</configuration>
+			</plugin>
             
             
             <plugin>
