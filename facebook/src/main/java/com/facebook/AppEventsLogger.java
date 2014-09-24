@@ -1006,12 +1006,12 @@ public class AppEventsLogger {
         return;
     }
 
-    public static void setSourceApplication(String applicationPackage, boolean openByAppLink) {
+    static void setSourceApplication(String applicationPackage, boolean openByAppLink) {
         sourceApplication = applicationPackage;
         isOpenedByApplink = openByAppLink;
     }
 
-    public static String getSourceApplication() {
+    static String getSourceApplication() {
         String openType = "Unclassified";
         if (isOpenedByApplink) {
             openType = "Applink";
@@ -1022,7 +1022,7 @@ public class AppEventsLogger {
         return openType;
     }
 
-    public static void resetSourceApplication() {
+    static void resetSourceApplication() {
         sourceApplication = null;
         isOpenedByApplink = false;
     }
