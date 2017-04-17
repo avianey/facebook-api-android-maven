@@ -5,9 +5,9 @@ The API is packaged as an **aar** and available from Maven Central Repository fo
 
 [![](https://coinbase.com/assets/buttons/donation_large-6ec72b1a9eec516944e50a22aca7db35.png)](https://coinbase.com/checkouts/0c34d3ca1be50e54a20bc83446b4db00)
 
-###How to use
+### How to use
 
-####Maven
+#### Maven
 
 The **aar** dependency requires the use of the maven-android-plugin 3.8.1+ with maven 3.1.1+ :
 
@@ -65,7 +65,7 @@ You might want to add the **jar** dependency as well to support code completion 
 </profiles>
 ```
 
-####Gradle
+#### Gradle
 
 Add the following dependency to your build.gradle
 
